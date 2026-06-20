@@ -1,0 +1,63 @@
+:root {
+  --bg: #0a0a0b;
+  --gold: #cda96a;
+  --gold-bright: #e6cfa0;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: #e9e7e2;
+  font-family: 'Manrope', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+
+::selection { background: rgba(205,169,106,0.32); color: #fff; }
+::-webkit-scrollbar { width: 11px; }
+::-webkit-scrollbar-track { background: #0a0a0b; }
+::-webkit-scrollbar-thumb { background: #26262b; border-radius: 8px; border: 3px solid #0a0a0b; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a42; }
+
+textarea, input { font-family: 'Manrope', sans-serif; }
+textarea::placeholder, input::placeholder { color: #6f6c65; }
+button { font-family: 'Manrope', sans-serif; }
+
+@keyframes artBlobA { 0%{transform:translate(0,0) scale(1);} 50%{transform:translate(8vw,6vh) scale(1.18);} 100%{transform:translate(0,0) scale(1);} }
+@keyframes artBlobB { 0%{transform:translate(0,0) scale(1.05);} 50%{transform:translate(-7vw,-5vh) scale(1);} 100%{transform:translate(0,0) scale(1.05);} }
+@keyframes artBlobC { 0%{transform:translate(0,0) scale(1);} 50%{transform:translate(5vw,-7vh) scale(1.2);} 100%{transform:translate(0,0) scale(1);} }
+@keyframes artShimmer { 0%{background-position:0% 50%;} 100%{background-position:200% 50%;} }
+@keyframes artFloat { 0%{transform:translateY(0);} 50%{transform:translateY(-7px);} 100%{transform:translateY(0);} }
+
+.reveal { opacity: 0; transform: translateY(26px); }
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity .72s cubic-bezier(.22,.61,.36,1), transform .72s cubic-bezier(.22,.61,.36,1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal.is-in { opacity: 1 !important; transform: none !important; transition: none !important; }
+  [style*="animation"] { animation: none !important; }
+}
+
+.wordmark {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  letter-spacing: .3px;
+  background: linear-gradient(100deg,#e6cfa0,#cda96a,#f2e3c0,#cda96a);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: artShimmer 7s linear infinite;
+}
+
+.serif { font-family: 'Playfair Display', serif; }
+.eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  color: #cda96a; font-size: 12.5px; font-weight: 600;
+  letter-spacing: 2.5px; text-transform: uppercase;
+}
+.eyebrow::before { content: ""; width: 26px; height: 1px; background: #cda96a; display: inline-block; }
