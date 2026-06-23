@@ -56,7 +56,9 @@ export async function getSession(): Promise<SessionPayload | null> {
 export async function getCurrentUser() {
   const session = await getSession();
   if (!session) return null;
-  return prisma.user.findUnique({ where: { id: session.uid } });
+  const user = await prisma.user.findUnique({ where: { id: session.uid } });
+  if (user?.isBanned) return null;
+  return user;
 }
 
 export async function requireUser() {

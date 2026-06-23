@@ -16,6 +16,9 @@ export async function POST(req: Request) {
   if (!user || !(await verifyPassword(password, user.password))) {
     return NextResponse.json({ error: "Неверный e-mail или пароль" }, { status: 401 });
   }
+  if (user.isBanned) {
+    return NextResponse.json({ error: "Этот аккаунт заблокирован" }, { status: 403 });
+  }
   await createSession({ uid: user.id, role: user.role });
   return NextResponse.json({ ok: true, role: user.role });
 }

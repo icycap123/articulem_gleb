@@ -115,3 +115,35 @@ export async function moderateArticle(articleId: string, action: "APPROVE" | "RE
   revalidatePath("/");
   return { ok: true };
 }
+
+export async function deleteArticle(articleId: string) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "ADMIN") return { ok: false, error: "FORBIDDEN" };
+
+  await prisma.article.delete({ where: { id: articleId } });
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+  revalidatePath("/popular");
+  return { ok: true };
+}
+
+export async function toggleBanUser(userId: string) {
+  const admin = await getCurrentUser();
+  if (!admin || admin.role !== "ADMIN") return { ok: false, error: "FORBIDDEN" };
+  if (admin.id === userId) return { ok: false, error: "SELF" };
+
+  const target = await prisma.user.findUnique({ where: { id: userId } });
+  if (!target) return { ok: false, error: "NOT_FOUND" };
+  if (target.role === "ADMIN") return { ok: false, error: "CANT_BAN_ADMIN" };
+
+  const updated = await prisma.user.update({
+    where: { id: userId },
+    data: { isBanned: !target.isBanned },
+  });
+
+  revalidatePath("/authors");
+  revalidatePath(`/authors/${userId}`);
+  revalidatePath("/admin");
+  return { ok: true, isBanned: updated.isBanned };
+}
