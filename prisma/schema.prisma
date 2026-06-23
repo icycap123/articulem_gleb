@@ -27,9 +27,10 @@ model User {
   password  String
   role      Role     @default(USER)
   bio       String?
-  role_tag  String?  // e.g. "Технологии · общество"
+  role_tag  String?
   initials  String
   color     String   @default("#cda96a")
+  isBanned  Boolean  @default(false)
   createdAt DateTime @default(now())
 
   articles  Article[]
