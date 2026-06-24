@@ -97,6 +97,8 @@ export async function getAuthorsWithStats() {
       role_tag: u.role_tag,
       articles: approvedCount[u.id] || 0,
       followers: u._count.followers,
+      isBanned: u.isBanned,
+      role: u.role,
     }))
     .filter((u) => u.articles > 0)
     .sort((a, b) => b.articles - a.articles);
@@ -149,4 +151,42 @@ export async function getPendingArticles() {
     include: { author: { select: { name: true, initials: true, color: true } } },
     orderBy: { createdAt: "asc" },
   });
+}
+
+export async function getAuthorProfile(authorId: string) {
+  const user = await prisma.user.findUnique({ where: { id: authorId } });
+  if (!user) return null;
+
+  const [articles, followersCount, totalLikes] = await Promise.all([
+    prisma.article.findMany({
+      where: { authorId, status: "APPROVED" },
+      include: { _count: { select: { likes: true, comments: true } } },
+      orderBy: { publishedAt: "desc" },
+    }),
+    prisma.follow.count({ where: { followingId: authorId } }),
+    prisma.like.count({ where: { article: { authorId } } }),
+  ]);
+
+  return { user, articles, followersCount, totalLikes };
+}
+
+export async function getFollowingList(userId: string) {
+  const follows = await prisma.follow.findMany({
+    where: { followerId: userId },
+    include: {
+      following: {
+        include: { _count: { select: { followers: true } } },
+      },
+    },
+    orderBy: { id: "desc" },
+  });
+  return follows.map((f) => ({
+    id: f.following.id,
+    name: f.following.name,
+    initials: f.following.initials,
+    color: f.following.color,
+    bio: f.following.bio,
+    role_tag: f.following.role_tag,
+    followers: f.following._count.followers,
+  }));
 }

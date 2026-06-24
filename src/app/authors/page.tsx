@@ -39,6 +39,8 @@ export default async function AuthorsPage() {
                 following={followingSet.has(a.id)}
                 isAuthed={!!session}
                 isSelf={session?.uid === a.id}
+                isAdminViewing={session?.role === "ADMIN" && a.role !== "ADMIN"}
+                isBanned={a.isBanned}
               />
             </Reveal>
           ))}

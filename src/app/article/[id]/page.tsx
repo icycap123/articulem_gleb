@@ -6,6 +6,7 @@ import { badge, avatar, thumbGlyph, catColor, hex, formatDate, FONT_SERIF } from
 import LikeButton from "@/components/LikeButton";
 import FollowButton from "@/components/FollowButton";
 import { SaveButton, CommentForm } from "@/components/CommentInteractions";
+import DeleteArticleButton from "@/components/DeleteArticleButton";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,7 @@ export default async function ArticlePage({ params }: { params: { id: string } }
             <div style={{ fontSize: 15, fontWeight: 600, color: "#e9e7e2" }}>{article.author.name}</div>
             <div style={{ fontSize: 13, color: "#79766f" }}>{formatDate(article.createdAt)} · {article.readTime} мин чтения</div>
           </div>
+          {session?.role === "ADMIN" && <DeleteArticleButton articleId={article.id} redirectTo="/" />}
           <LikeButton articleId={article.id} initialLikes={article._count.likes} initialLiked={liked.has(article.id)} color={col} isAuthed={!!session} size="lg" />
           <SaveButton />
         </div>

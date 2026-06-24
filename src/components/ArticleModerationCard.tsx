@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { badge, avatar, thumb, thumbGlyph, formatDate } from "@/lib/theme";
 import AdminActions from "./AdminActions";
+import DeleteArticleButton from "./DeleteArticleButton";
 
 export default function ArticleModerationCard({ a, col }: { a: any; col: string }) {
   const [expanded, setExpanded] = useState(false);
@@ -45,7 +46,10 @@ export default function ArticleModerationCard({ a, col }: { a: any; col: string 
           <span style={{ fontSize: 13.5, color: "#d8d5cd", fontWeight: 600 }}>{a.author.name}</span>
         </div>
       </div>
-      <AdminActions articleId={a.id} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <AdminActions articleId={a.id} />
+        <DeleteArticleButton articleId={a.id} />
+      </div>
     </div>
   );
 }

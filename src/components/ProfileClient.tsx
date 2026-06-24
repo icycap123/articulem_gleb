@@ -18,6 +18,16 @@ export type ProfileArticle = {
   authorName?: string;
 };
 
+export type FollowedAuthor = {
+  id: string;
+  name: string;
+  initials: string;
+  color: string;
+  bio: string | null;
+  role_tag: string | null;
+  followers: number;
+};
+
 const STATUS_META: Record<string, { label: string; col: string }> = {
   PENDING: { label: "На проверке", col: "#f0b46a" },
   APPROVED: { label: "Опубликовано", col: "#5fd1b0" },
@@ -59,6 +69,25 @@ function Row({ a, showStatus, showAuthor }: { a: ProfileArticle; showStatus?: bo
     </div>
   );
   return a.status === "APPROVED" || showAuthor ? <Link href={`/article/${a.id}`}>{inner}</Link> : inner;
+
+  function AuthorRow({ a }: { a: FollowedAuthor }) {
+  return (
+    <Link
+      href={`/authors/${a.id}`}
+      style={{ display: "flex", gap: 16, alignItems: "center", background: "rgba(18,18,20,0.72)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: 18, transition: "border-color .3s ease" }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = hex(a.color, 0.34); }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
+    >
+      <div style={avatar(a.color, 50, 17)}>{a.initials}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="serif" style={{ fontSize: 17, fontWeight: 600, color: "#f0ede6" }}>{a.name}</div>
+        <div style={{ fontSize: 13, color: hex(a.color, 0.9), marginTop: 2 }}>{a.role_tag || "Автор платформы"}</div>
+        {a.bio && <div style={{ fontSize: 13, color: "#9a978f", marginTop: 4, lineHeight: 1.4 }}>{a.bio}</div>}
+      </div>
+      <div style={{ fontSize: 13, color: "#79766f", whiteSpace: "nowrap" }}>{a.followers} подписчиков</div>
+    </Link>
+  );
+}
 }
 
 export default function ProfileClient({
@@ -72,6 +101,7 @@ export default function ProfileClient({
   published,
   review,
   liked,
+  following,
   submitted,
 }: {
   name: string;
@@ -84,12 +114,14 @@ export default function ProfileClient({
   published: ProfileArticle[];
   review: ProfileArticle[];
   liked: ProfileArticle[];
+  following: FollowedAuthor[];
   submitted: boolean;
 }) {
   const tabs = [
     { key: "pub", label: `Опубликованные · ${published.length}` },
     { key: "rev", label: `На проверке · ${review.length}` },
     { key: "liked", label: `Понравившиеся · ${liked.length}` },
+    { key: "following", label: `Подписки · ${following.length}` },
   ];
   const [tab, setTab] = useState("pub");
 
@@ -134,6 +166,7 @@ export default function ProfileClient({
         {tab === "pub" && (published.length ? published.map((a) => <Row key={a.id} a={a} />) : <Empty text="У вас пока нет опубликованных статей." cta />)}
         {tab === "rev" && (review.length ? review.map((a) => <Row key={a.id} a={a} showStatus />) : <Empty text="Нет статей на проверке." />)}
         {tab === "liked" && (liked.length ? liked.map((a) => <Row key={a.id} a={a} showAuthor />) : <Empty text="Вы ещё не оценили ни одной статьи." />)}
+        {tab === "following" && (following.length ? following.map((a) => <AuthorRow key={a.id} a={a} />) : <Empty text="Вы пока ни на кого не подписаны." />)}
       </div>
     </div>
   );

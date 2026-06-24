@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import ProfileClient, { type ProfileArticle } from "@/components/ProfileClient";
 import { getCurrentUser } from "@/lib/auth";
-import { getProfileData } from "@/lib/queries";
+import { getProfileData, getFollowingList } from "@/lib/queries";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/theme";
 
@@ -12,6 +12,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: { su
   if (!user) redirect("/login?next=/profile");
 
   const { articles, totalLikes, comments, followers } = await getProfileData(user.id);
+  const followingList = await getFollowingList(user.id);
 
   const likedRows = await prisma.like.findMany({
     where: { userId: user.id },
@@ -69,6 +70,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: { su
       published={published}
       review={review}
       liked={liked}
+      following={followingList}
       submitted={searchParams.submitted === "1"}
     />
   );
