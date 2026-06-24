@@ -69,6 +69,7 @@ function Row({ a, showStatus, showAuthor }: { a: ProfileArticle; showStatus?: bo
     </div>
   );
   return a.status === "APPROVED" || showAuthor ? <Link href={`/article/${a.id}`}>{inner}</Link> : inner;
+}
 
   function AuthorRow({ a }: { a: FollowedAuthor }) {
   return (
@@ -88,7 +89,7 @@ function Row({ a, showStatus, showAuthor }: { a: ProfileArticle; showStatus?: bo
     </Link>
   );
 }
-}
+
 
 export default function ProfileClient({
   name,
